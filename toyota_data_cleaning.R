@@ -96,6 +96,30 @@ prius_model <- lm(sale_price ~ car_year + color + subseries + body + mileage +
 summary(prius_model)
 
 
+# Avalon Cleaning 
+
+avalon$subseries <- as.factor(avalon$subseries)
+summary(avalon$subseries)
+#Not big enough sample size for hybrid ltd, stx, xle touring, or xse
+
+avalon$subseries <- fct_collapse(avalon$subseries, DROPPED = c("HYBRID LTD", "NONE",
+                      "STX", "XLE TOURIN", "XSE"))
+
+for (i in 1:length(avalon$subseries)) {
+  if (avalon$subseries[i] == "DROPPED") {
+    avalon$subseries[i] <- NA
+  }
+}
+
+avalon <- avalon[complete.cases(avalon[, 6]),]
+avalon$subseries <- droplevels(avalon$subseries)
+
+
+avalon$engine <- as.factor(avalon$engine)
+summary(avalon$engine)
+#Two Engine Types (4H and 6G)
+
+
 
 
 
