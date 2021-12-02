@@ -91,9 +91,73 @@ prius$car_year <- as.factor(prius$car_year)
 
 # Test Model
 
-prius_model <- lm(sale_price ~ car_year + color + subseries + body + mileage +
+prius_model <- lm(sale_price ~ car_year  + subseries + body + mileage +
                     condition_grade + times_run + region, data = prius)
 summary(prius_model)
+
+#Findings: All US regions have lower expected sales price than Canada Region (maybe value of dollar?)
+# color is insignificant to sales price
+# haven't tried using date of sale as a IV yet, might could see if there's an effect of price over time
+
+
+# Avalon Cleaning 
+
+avalon$subseries <- as.factor(avalon$subseries)
+summary(avalon$subseries)
+#Not big enough sample size for hybrid ltd, stx, xle touring, or xse
+
+avalon$subseries <- fct_collapse(avalon$subseries, DROPPED = c("HYBRID LTD", "NONE",
+                      "STX", "XLE TOURIN", "XSE"))
+
+for (i in 1:length(avalon$subseries)) {
+  if (avalon$subseries[i] == "DROPPED") {
+    avalon$subseries[i] <- NA
+  }
+}
+
+avalon <- avalon[complete.cases(avalon[, 6]),]
+avalon$subseries <- droplevels(avalon$subseries)
+
+
+avalon$engine <- as.factor(avalon$engine)
+summary(avalon$engine)
+#Two Engine Types (4H and 6G)
+
+
+avalon$condition_grade <- as.factor(avalon$condition_grade)
+summary(avalon$condition_grade)
+
+for (i in 1:length(avalon$condition_grade)) {
+  if (avalon$condition_grade[i] == "AV") {
+    avalon$condition_grade[i] <- 30
+  }
+  else if (avalon$condition_grade[i] == "CL") {
+    avalon$condition_grade[i] <- 40
+  }
+  else if (avalon$condition_grade[i] == "PR") {
+    avalon$condition_grade[i] <- 10
+  }
+  else if (avalon$condition_grade[i] == "RG") {
+    avalon$condition_grade[i] <- 20
+  }
+  else if (avalon$condition_grade[i] == "SL") {
+    avalon$condition_grade[i] <- 0
+  }
+}
+
+avalon$condition_grade <- droplevels(avalon$condition_grade)
+avalon$condition_grade <- as.numeric(avalon$condition_grade)
+
+avalon$car_year <- as.factor(avalon$car_year)
+
+
+avalon_model <- lm(sale_price ~ car_year + subseries + engine + mileage +
+                    condition_grade + times_run + region, data = avalon)
+summary(avalon_model)
+
+
+#Findings: High R^2 score, but coefficients seem a bit funky and lots of high p-scores
+# need to investigate and/or try new models (want to give ML models a chance)
 
 
 
