@@ -15,10 +15,12 @@ data_nona$sold_date <- substr(data_nona$sold_date, 1, 10)
 data_nona$sold_year <- substr(data_nona$sold_date, 1, 4)
 data_nona$sold_month <- substr(data_nona$sold_date, 6, 7)
 data_nona$sold_month <- as.numeric(data_nona$sold_month)
+data_nona$sold_date <- as.Date(data_nona$sold_date, format = "%Y-%m-%d")
 
-
-prius$sold_date <- as.Date(prius$sold_date, format = "%Y-%m-%d")
-prius$sold_year <- as.factor(prius$sold_year)
+# install.packages("zoo")
+library(zoo)
+data_nona$quarter <- as.yearqtr(data_nona$sold_date, format = "%Y-%m-%d")
+data_nona$quarter <- as.factor(data_nona$quarter)
 
 
 
@@ -106,12 +108,12 @@ prius$sold_date <- as.Date(prius$sold_date, format = "%Y-%m-%d")
 
 # Test Model
 
-prius_model <- lm(sale_price ~ car_year + subseries + sold_year + sold_quarter
+prius_model <- lm(sale_price ~ car_year + subseries + quarter
                   + times_run + mileage + condition_grade, data = prius)
 summary(prius_model)
-plot(prius_model)
+#plot(prius_model)
 
-p_car_year_plot <- plot(prius$car_year, prius$sale_price)
+#p_car_year_plot <- plot(prius$car_year, prius$sale_price)
 
 # Avalon Cleaning
 
@@ -167,7 +169,7 @@ avalon$condition_grade <- as.numeric(avalon$condition_grade)
 
 avalon$car_year <- as.factor(avalon$car_year)
 
-avalon_model <- lm(sale_price ~ car_year + subseries + sold_year + sold_month
+avalon_model <- lm(sale_price ~ car_year + subseries + quarter
                   + times_run + engine + mileage + condition_grade, data = avalon)
 summary(avalon_model)
-plot(avalon_model)
+#plot(avalon_model)
