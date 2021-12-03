@@ -20,6 +20,8 @@ data_nona$sold_date <- as.Date(data_nona$sold_date, format = "%Y-%m-%d")
 # install.packages("zoo")
 library(zoo)
 data_nona$quarter <- as.yearqtr(data_nona$sold_date, format = "%Y-%m-%d")
+data_nona$quarter <- as.character(data_nona$quarter)
+data_nona$quarter <- substr(data_nona$quarter, 6, 7)
 data_nona$quarter <- as.factor(data_nona$quarter)
 
 
